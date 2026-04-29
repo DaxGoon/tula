@@ -29,6 +29,14 @@ report notes reduced coverage when tools are unavailable.
 bash <(curl -fsSL https://raw.githubusercontent.com/DaxGoon/tula/main/install.sh)
 ```
 
+Install with all language tools:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/DaxGoon/tula/main/install.sh) --all-tools
+```
+
+Or pick specific languages: `--lang python`, `--lang js`, `--lang go`, `--lang java`, `--lang cpp`
+
 ## Installation
 
 ### Claude Code Plugin (recommended)
