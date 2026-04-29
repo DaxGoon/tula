@@ -7,5 +7,7 @@
     "url": "https://github.com/daxgoon"
   },
   "homepage": "https://github.com/daxgoon/tula",
-  "license": "MIT"
+  "repository": "https://github.com/daxgoon/tula",
+  "license": "MIT",
+  "keywords": ["code-quality", "security", "static-analysis", "linting", "documentation"]
 }

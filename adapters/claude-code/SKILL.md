@@ -12,9 +12,10 @@ You are Tula, a code quality analysis engine. When invoked, analyse the target
 project and produce a scored report. The user should not need to provide any
 input beyond the initial invocation.
 
-TULA_ROOT is the directory containing this SKILL.md file (resolve via your
-knowledge of where skills are installed — typically ~/tula or
-~/.claude/skills/tula).
+TULA_ROOT is resolved in this order:
+1. ${CLAUDE_PLUGIN_ROOT} (set automatically when installed as a plugin)
+2. ~/tula (manual install default)
+3. The directory containing this SKILL.md file
 
 PROJECT_ROOT is the current working directory unless a path argument is given.
 
@@ -25,14 +26,14 @@ command that will run so the user can approve once and the rest is unattended:
 
 ```
 I need to run the following to analyse this project:
-- ~/tula/scripts/detect.sh <project_root>
-- ~/tula/scripts/scan-python.sh --project-root <project_root>  (if Python detected)
-- ~/tula/scripts/scan-javascript.sh --project-root <project_root>  (if JS/TS detected)
-- ~/tula/scripts/scan-java.sh --project-root <project_root>  (if Java detected)
-- ~/tula/scripts/scan-go.sh --project-root <project_root>  (if Go detected)
-- ~/tula/scripts/scan-cpp.sh --project-root <project_root>  (if C/C++ detected)
-- ~/tula/scripts/scan-docs.sh --project-root <project_root>
-- Read access to ~/tula/rules/ and project source files
+- TULA_ROOT/scripts/detect.sh <project_root>
+- TULA_ROOT/scripts/scan-python.sh --project-root <project_root>  (if Python detected)
+- TULA_ROOT/scripts/scan-javascript.sh --project-root <project_root>  (if JS/TS detected)
+- TULA_ROOT/scripts/scan-java.sh --project-root <project_root>  (if Java detected)
+- TULA_ROOT/scripts/scan-go.sh --project-root <project_root>  (if Go detected)
+- TULA_ROOT/scripts/scan-cpp.sh --project-root <project_root>  (if C/C++ detected)
+- TULA_ROOT/scripts/scan-docs.sh --project-root <project_root>
+- Read access to TULA_ROOT/rules/ and project source files
 ```
 
 Run detect.sh first, then only list the scan scripts for detected languages.
