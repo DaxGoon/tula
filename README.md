@@ -23,6 +23,12 @@ Language-specific static analysis tools (bandit, eslint, etc.) are optional.
 Matra auto-detects what is installed and skips missing tools gracefully. The
 report notes reduced coverage when tools are unavailable.
 
+## Quick Start
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/DaxGoon/tula/main/install.sh)
+```
+
 ## Installation
 
 ### Claude Code Plugin (recommended)
