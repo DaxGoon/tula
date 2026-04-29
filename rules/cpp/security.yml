@@ -1,0 +1,76 @@
+language: cpp
+category: security
+
+tools:
+  - id: clang-tidy-security
+    name: Clang-Tidy Security Checks
+    purpose: Detect security-related issues via clang-tidy security checks
+    install: "brew install llvm (macOS) or apt install clang-tidy (Debian/Ubuntu)"
+    invocation:
+      command: "clang-tidy {file} --checks=-*,security-*"
+      timeout: 120
+      output_format: lines
+      output_parse_pattern: '(.+):(\d+):(\d+): (error|warning): (.+) \[([^\]]+)\]'
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "security-*": security
+    fields:
+      message: 5
+      severity: 4
+      line: 2
+      rule: 6
+
+  - id: cppcheck-security
+    name: Cppcheck Security Checks
+    purpose: Detect buffer overflows, null dereferences, and memory issues
+    install: "brew install cppcheck (macOS) or apt install cppcheck (Debian/Ubuntu)"
+    invocation:
+      command: "cppcheck --xml --xml-version=2 --enable=all {file}"
+      timeout: 60
+      output_format: xml
+      output_stream: stderr
+    severity_map:
+      error: high
+      warning: medium
+      style: low
+      performance: medium
+      portability: low
+      information: low
+    category_map:
+      "*buffer*": security
+      "*overflow*": security
+      "*null*": security
+      "*memory*": security
+    fields:
+      message: "msg"
+      severity: "severity"
+      line: "location.line"
+      rule: "id"
+
+patterns:
+  - id: unsafe-string-function
+    pattern: '\b(strcpy|strcat|sprintf|gets)\s*\('
+    severity: high
+    category: security
+    message: "Unsafe string function -- use safer alternatives (strncpy, strncat, snprintf, fgets)"
+
+  - id: format-string-vuln
+    pattern: '\bprintf\s*\(\s*\w+\s*\)'
+    severity: high
+    category: security
+    message: "Potential format string vulnerability -- use explicit format specifiers"
+
+  - id: hardcoded-secret
+    pattern: '(password|secret|key|token)\s*=\s*"[^"]{8,}"'
+    flags: IGNORECASE
+    severity: high
+    category: security
+    message: "Potential hardcoded secret -- use secure storage or environment variables"
+
+  - id: insecure-random
+    pattern: '\brand\s*\(\s*\)'
+    severity: medium
+    category: security
+    message: "rand() is not cryptographically secure -- consider arc4random or OS-provided CSPRNG"

@@ -1,0 +1,57 @@
+language: go
+category: performance
+
+tools:
+  - id: golangci-lint-performance
+    name: golangci-lint Performance Linters
+    purpose: Performance analysis via prealloc, gocritic, etc.
+    install: "go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
+    invocation:
+      command: "golangci-lint run --out-format json --enable prealloc,gocritic,copyloopvar {files}"
+      timeout: 180
+      output_format: json
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "prealloc": performance
+      "gocritic": performance
+      "copyloopvar": performance
+    fields:
+      message: "Text"
+      severity: "Severity"
+      line: "Pos.Line"
+      rule: "FromLinter"
+
+patterns:
+  - id: go-string-concat-loop
+    pattern: 'for\s.*\{[^}]*\+\s*=\s*"'
+    severity: medium
+    category: performance
+    message: "String concatenation in loop; use strings.Builder for O(n) performance"
+
+  - id: go-append-no-prealloc
+    pattern: 'var\s+\w+\s+\[\]\w+\s*\n[^}]*for\s.*\{[^}]*append\s*\('
+    severity: low
+    category: performance
+    message: "Slice grown via append without pre-allocation; use make() with known capacity"
+
+  - id: go-regex-compile-inline
+    pattern: 'regexp\.(MustCompile|Compile)\s*\('
+    severity: low
+    category: performance
+    message: "Compile regexp once at package level rather than per-call"
+    exclude: ["_test.go", "init"]
+
+  - id: go-fmt-sprintf-simple
+    pattern: 'fmt\.Sprintf\s*\(\s*"%[sd]"\s*,'
+    severity: low
+    category: performance
+    message: "fmt.Sprintf with single verb; use strconv or direct conversion for better performance"
+
+  - id: go-sync-mutex-value
+    pattern: 'func\s+\([^*][^)]*\)\s+\w+\s*\('
+    severity: medium
+    category: performance
+    message: "Value receiver on type with sync.Mutex copies the mutex; use pointer receiver"
+    exclude: ["_test.go"]

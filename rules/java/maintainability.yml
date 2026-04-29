@@ -1,0 +1,81 @@
+language: java
+category: maintainability
+
+tools:
+  - id: checkstyle
+    name: Checkstyle
+    purpose: Code style and convention enforcement
+    install: "brew install checkstyle  # or download from https://checkstyle.org/"
+    invocation:
+      command: "checkstyle -c /google_checks.xml -f xml {files}"
+      timeout: 120
+      output_format: xml
+    severity_map:
+      error: high
+      warning: medium
+      info: low
+    category_override: maintainability
+    fields:
+      message: "message"
+      severity: "severity"
+      line: "line"
+      rule: "source"
+
+patterns:
+  - id: java-todo-fixme
+    pattern: '//.*\b(TODO|FIXME|HACK|XXX)\b'
+    severity: low
+    category: maintainability
+    message: "Unresolved TODO/FIXME comment"
+
+  - id: java-star-import
+    pattern: '^import\s+[\w.]+\.\*\s*;'
+    severity: low
+    category: maintainability
+    message: "Wildcard import reduces clarity; use explicit imports"
+
+  - id: java-magic-number
+    pattern: '(?<![\w.])\b(?!0\b|1\b|2\b|-1\b)\d{3,}\b'
+    severity: low
+    category: maintainability
+    message: "Magic number detected; extract to a named constant"
+    exclude: ["test", "Test", "config"]
+
+  - id: java-god-class-indicator
+    pattern: '(public|private|protected)\s+\w+\s+\w+\s*[=(]'
+    severity: low
+    category: maintainability
+    message: "High field/method density may indicate a god class; consider decomposition"
+
+thresholds:
+  - id: java-function-too-long
+    metric: function_lines
+    operator: ">"
+    value: 50
+    severity: medium
+    category: maintainability
+    message: "Method exceeds 50 lines; consider extracting sub-methods"
+
+  - id: java-class-too-long
+    metric: class_lines
+    operator: ">"
+    value: 500
+    severity: medium
+    category: maintainability
+    message: "Class exceeds 500 lines; consider decomposition"
+
+  - id: java-deep-nesting
+    metric: nesting_depth
+    operator: ">"
+    value: 4
+    severity: medium
+    category: maintainability
+    message: "Nesting depth exceeds 4 levels; flatten with early returns or extraction"
+
+  - id: java-cyclomatic-complexity
+    metric: cyclomatic_complexity
+    operator: ">"
+    value: 10
+    severity: medium
+    category: maintainability
+    message: "Cyclomatic complexity exceeds 10; simplify control flow"

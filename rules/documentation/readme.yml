@@ -1,0 +1,74 @@
+language: all
+category: documentation
+
+patterns:
+  - id: DOC-README-001
+    description: README file exists
+    check: file_exists
+    paths: [README.md, README.rst, README.txt, README]
+    severity: high
+    message: "No README file found in project root"
+
+  - id: DOC-CHANGELOG-001
+    description: CHANGELOG file exists
+    check: file_exists
+    paths: [CHANGELOG.md, CHANGELOG.rst, CHANGELOG.txt, CHANGELOG, CHANGES.md, HISTORY.md]
+    severity: low
+    message: "No CHANGELOG file found"
+
+  - id: DOC-CONTRIB-001
+    description: Contributing guidelines exist
+    check: file_exists
+    paths: [CONTRIBUTING.md, CONTRIBUTING.rst, .github/CONTRIBUTING.md]
+    severity: low
+    message: "No CONTRIBUTING guide found"
+
+  - id: DOC-LICENCE-001
+    description: Licence file exists
+    check: file_exists
+    paths: [LICENSE, LICENSE.md, LICENSE.txt, LICENCE, LICENCE.md, LICENCE.txt]
+    severity: medium
+    message: "No licence file found"
+
+semantic:
+  - id: DOC-README-010
+    name: README Completeness
+    severity: medium
+    guidance: |
+      Evaluate whether the README contains these sections:
+      1. Project description (what it does and why it exists)
+      2. Installation or setup instructions
+      3. Usage examples with working commands or code
+      4. Configuration reference (if the project has config)
+      5. Contributing guidelines or link to CONTRIBUTING.md
+
+      Scoring:
+      - Missing 3+ sections: severity medium
+      - Missing 1-2 sections: severity low
+      - All present: no finding
+
+  - id: DOC-README-020
+    name: README Accuracy
+    severity: high
+    guidance: |
+      Cross-reference README claims against actual project state:
+      - Do install commands reference the correct package name from
+        pyproject.toml / package.json / go.mod / pom.xml?
+      - Do CLI examples match actual commands defined in the code?
+      - Do referenced file paths actually exist in the project?
+      - Are version numbers or dependency names current?
+
+      Flag any stale or misleading instructions as high severity.
+      Only flag clear inaccuracies, not stylistic preferences.
+
+  - id: DOC-README-030
+    name: README Clarity
+    severity: low
+    guidance: |
+      Assess whether a newcomer could understand the project from the README:
+      - Is the purpose clear in the first paragraph?
+      - Are setup steps numbered and sequential?
+      - Are code examples syntactically correct?
+      - Is jargon explained or linked?
+
+      Only flag genuinely confusing content, not style preferences.

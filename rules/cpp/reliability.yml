@@ -1,0 +1,57 @@
+language: cpp
+category: reliability
+
+tools:
+  - id: clang-tidy-bugprone
+    name: Clang-Tidy Bugprone Checks
+    purpose: Detect bug-prone patterns and common programming mistakes
+    install: "brew install llvm (macOS) or apt install clang-tidy (Debian/Ubuntu)"
+    invocation:
+      command: "clang-tidy {file} --checks=-*,bugprone-*"
+      timeout: 120
+      output_format: lines
+      output_parse_pattern: '(.+):(\d+):(\d+): (error|warning): (.+) \[([^\]]+)\]'
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "bugprone-*": reliability
+    fields:
+      message: 5
+      severity: 4
+      line: 2
+      rule: 6
+
+  - id: cppcheck-reliability
+    name: Cppcheck Reliability Checks
+    purpose: Detect resource leaks, undefined behaviour, and crash-prone code
+    install: "brew install cppcheck (macOS) or apt install cppcheck (Debian/Ubuntu)"
+    invocation:
+      command: "cppcheck --xml --xml-version=2 --enable=all {file}"
+      timeout: 60
+      output_format: xml
+      output_stream: stderr
+    severity_map:
+      error: high
+      warning: medium
+      style: low
+      performance: medium
+      portability: low
+      information: low
+    category_map:
+      "*leak*": reliability
+      "*crash*": reliability
+      "*undefined*": reliability
+      "*error*": reliability
+    fields:
+      message: "msg"
+      severity: "severity"
+      line: "location.line"
+      rule: "id"
+
+patterns:
+  - id: malloc-check
+    pattern: '\bmalloc\s*\('
+    severity: medium
+    category: reliability
+    message: "malloc() used -- ensure corresponding free() and null-check the return value"

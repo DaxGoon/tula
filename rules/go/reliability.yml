@@ -1,0 +1,85 @@
+language: go
+category: reliability
+
+tools:
+  - id: go-vet
+    name: go vet
+    purpose: Built-in static analysis for common mistakes
+    install: "Included with Go toolchain"
+    invocation:
+      command: "go vet ./..."
+      timeout: 120
+      output_format: stderr
+    severity_map:
+      error: medium
+    category_override: reliability
+    fields:
+      message: "message"
+      severity: "level"
+      line: "line"
+      rule: "check"
+
+  - id: staticcheck-reliability
+    name: staticcheck Reliability Checks
+    purpose: Advanced static analysis for correctness issues
+    install: "go install honnef.co/go/tools/cmd/staticcheck@latest"
+    invocation:
+      command: "staticcheck -f json ./..."
+      timeout: 180
+      output_format: json
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "SA": reliability
+      "ST": maintainability
+      "S": performance
+      "QF": maintainability
+    fields:
+      message: "message"
+      severity: "severity"
+      line: "location.line"
+      rule: "code"
+
+  - id: golangci-lint-reliability
+    name: golangci-lint Reliability Linters
+    purpose: Bug detection via errcheck, ineffassign, bodyclose, etc.
+    install: "go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
+    invocation:
+      command: "golangci-lint run --out-format json --enable errcheck,ineffassign,bodyclose,nilerr {files}"
+      timeout: 180
+      output_format: json
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "errcheck": reliability
+      "ineffassign": reliability
+      "bodyclose": reliability
+      "nilerr": reliability
+    fields:
+      message: "Text"
+      severity: "Severity"
+      line: "Pos.Line"
+      rule: "FromLinter"
+
+patterns:
+  - id: go-unchecked-error
+    pattern: '[^_]\s*=\s*\w+\.\w+\([^)]*\)\s*$'
+    severity: medium
+    category: reliability
+    message: "Return value possibly discarded; check errors explicitly"
+    exclude: ["_test.go"]
+
+  - id: go-defer-in-loop
+    pattern: 'for\s.*\{[^}]*defer\b'
+    severity: medium
+    category: reliability
+    message: "Defer inside loop accumulates deferred calls until function returns"
+
+  - id: go-goroutine-leak
+    pattern: 'go\s+func\s*\([^)]*\)\s*\{[^}]*\}\s*\([^)]*\)'
+    severity: medium
+    category: reliability
+    message: "Anonymous goroutine may leak if not properly synchronised"
+    exclude: ["_test.go"]

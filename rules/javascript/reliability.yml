@@ -1,0 +1,64 @@
+language: javascript
+category: reliability
+
+tools:
+  - id: tsc-noEmit
+    name: TypeScript Compiler
+    purpose: Static type checking without emitting output
+    install: "npm install -g typescript"
+    invocation:
+      command: "tsc --noEmit --pretty false --project {project_root}/tsconfig.json"
+      timeout: 120
+      output_format: stderr
+    severity_map:
+      error: medium
+    category_override: reliability
+    fields:
+      message: "messageText"
+      severity: "category"
+      line: "line"
+      rule: "code"
+
+  - id: eslint-reliability
+    name: ESLint Reliability Rules
+    purpose: Detect potential bugs and incorrect logic
+    install: "npm install -g eslint"
+    invocation:
+      command: "eslint -f json --no-error-on-unmatched-pattern {files}"
+      timeout: 120
+      output_format: json
+    severity_map:
+      2: high
+      1: medium
+    category_map:
+      "no-unsafe-": reliability
+      "no-fallthrough": reliability
+      "no-unreachable": reliability
+      "no-dupe-": reliability
+      "use-isnan": reliability
+      "valid-typeof": reliability
+    fields:
+      message: "message"
+      severity: "severity"
+      line: "line"
+      rule: "ruleId"
+
+patterns:
+  - id: js-promise-no-catch
+    pattern: '\.then\s*\([^)]*\)\s*;'
+    severity: medium
+    category: reliability
+    message: "Promise chain without .catch() may silently swallow errors"
+    exclude: ["test", "spec", "__tests__"]
+
+  - id: js-async-no-await
+    pattern: 'async\s+function\s+\w+\s*\([^)]*\)\s*\{[^}]*\}'
+    severity: low
+    category: reliability
+    message: "Async function may be missing await calls"
+
+  - id: js-equality-null
+    pattern: '[^!=]==[^=]\s*null\b'
+    severity: low
+    category: reliability
+    message: "Loose equality with null; prefer strict equality (===)"

@@ -1,0 +1,78 @@
+language: javascript
+category: maintainability
+
+tools:
+  - id: eslint-maintainability
+    name: ESLint Maintainability Rules
+    purpose: Detect code style and maintainability issues
+    install: "npm install -g eslint"
+    invocation:
+      command: "eslint -f json --no-error-on-unmatched-pattern {files}"
+      timeout: 120
+      output_format: json
+    severity_map:
+      2: high
+      1: medium
+    category_map:
+      "no-unused-": maintainability
+      "no-var": maintainability
+      "prefer-const": maintainability
+      "no-shadow": maintainability
+      "complexity": maintainability
+    fields:
+      message: "message"
+      severity: "severity"
+      line: "line"
+      rule: "ruleId"
+
+patterns:
+  - id: js-console-log
+    pattern: '\bconsole\.(log|debug|info)\s*\('
+    severity: low
+    category: maintainability
+    message: "Console logging left in production code"
+    exclude: ["test", "spec", "__tests__", "scripts"]
+
+  - id: js-todo-fixme
+    pattern: '[/\*].*\b(TODO|FIXME|HACK|XXX)\b'
+    severity: low
+    category: maintainability
+    message: "Unresolved TODO/FIXME comment"
+
+  - id: js-magic-number
+    pattern: '(?<![\w.])\b(?!0\b|1\b|2\b|-1\b)\d{2,}\b(?!\s*[;:}\])])'
+    severity: low
+    category: maintainability
+    message: "Magic number detected; extract to a named constant"
+    exclude: ["test", "spec", "__tests__", "config"]
+
+  - id: js-deeply-nested-callback
+    pattern: '\)\s*=>\s*\{[^}]*\)\s*=>\s*\{[^}]*\)\s*=>\s*\{'
+    severity: medium
+    category: maintainability
+    message: "Deeply nested callbacks reduce readability; consider async/await or extraction"
+
+thresholds:
+  - id: js-function-too-long
+    metric: function_lines
+    operator: ">"
+    value: 40
+    severity: medium
+    category: maintainability
+    message: "Function exceeds 40 lines; consider extracting sub-functions"
+
+  - id: js-deep-nesting
+    metric: nesting_depth
+    operator: ">"
+    value: 4
+    severity: medium
+    category: maintainability
+    message: "Nesting depth exceeds 4 levels; flatten with early returns or extraction"
+
+  - id: js-cyclomatic-complexity
+    metric: cyclomatic_complexity
+    operator: ">"
+    value: 10
+    severity: medium
+    category: maintainability
+    message: "Cyclomatic complexity exceeds 10; simplify control flow"

@@ -1,0 +1,91 @@
+language: javascript
+category: security
+
+tools:
+  - id: eslint-security
+    name: ESLint Security Rules
+    purpose: Detect security anti-patterns via ESLint security plugins
+    install: "npm install -g eslint eslint-plugin-security"
+    invocation:
+      command: "eslint -f json --no-error-on-unmatched-pattern {files}"
+      timeout: 120
+      output_format: json
+    severity_map:
+      2: high
+      1: medium
+    category_map:
+      "security/": security
+    fields:
+      message: "message"
+      severity: "severity"
+      line: "line"
+      rule: "ruleId"
+
+  - id: npm-audit
+    name: npm audit
+    purpose: Scan dependencies for known vulnerabilities
+    install: "npm install -g npm"
+    invocation:
+      command: "npm audit --json --prefix {project_root}"
+      timeout: 120
+      output_format: json
+    severity_map:
+      critical: critical
+      high: high
+      moderate: medium
+      low: low
+    category_override: security
+    fields:
+      message: "title"
+      severity: "severity"
+      line: null
+      rule: "cwe"
+
+  - id: semgrep-js
+    name: Semgrep JS Security
+    purpose: SAST scanning for JavaScript/TypeScript security patterns
+    install: "pip install semgrep"
+    invocation:
+      command: "semgrep scan --config auto --lang js --lang ts --json {files}"
+      timeout: 180
+      output_format: json
+    severity_map:
+      ERROR: high
+      WARNING: medium
+      INFO: low
+    category_override: security
+    fields:
+      message: "extra.message"
+      severity: "extra.severity"
+      line: "start.line"
+      rule: "check_id"
+
+patterns:
+  - id: js-eval-usage
+    pattern: '\beval\s*\('
+    severity: high
+    category: security
+    message: "eval() executes arbitrary code and enables injection attacks"
+    exclude: ["test", "spec", "__tests__"]
+
+  - id: js-innerhtml-assignment
+    pattern: '\.innerHTML\s*='
+    severity: high
+    category: security
+    message: "innerHTML assignment enables XSS via unsanitised input"
+    exclude: ["test", "spec", "__tests__"]
+
+  - id: js-document-write
+    pattern: '\bdocument\.write\s*\('
+    severity: medium
+    category: security
+    message: "document.write can inject arbitrary content and enables XSS"
+    exclude: ["test", "spec", "__tests__"]
+
+  - id: js-hardcoded-secrets
+    pattern: '(password|secret|api_key|token)\s*[:=]\s*[''"][^''"]{8,}[''"]'
+    flags: IGNORECASE
+    severity: high
+    category: security
+    message: "Hardcoded secret detected; use environment variables or a secrets manager"
+    exclude: ["test", "spec", "__tests__", "example", "mock"]

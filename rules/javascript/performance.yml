@@ -1,0 +1,40 @@
+language: javascript
+category: performance
+
+patterns:
+  - id: js-sync-fs
+    pattern: '\bfs\.(readFileSync|writeFileSync|appendFileSync|existsSync|mkdirSync)\s*\('
+    severity: medium
+    category: performance
+    message: "Synchronous filesystem operation blocks the event loop; prefer async variant"
+    exclude: ["test", "spec", "__tests__", "scripts", "cli"]
+
+  - id: js-regex-in-loop
+    pattern: 'for\s*\([^)]*\)\s*\{[^}]*new\s+RegExp\('
+    severity: medium
+    category: performance
+    message: "RegExp constructed inside loop; compile once outside the loop"
+
+  - id: js-array-in-loop-condition
+    pattern: '\bfor\s*\(\s*\w+[^;]*;\s*\w+\s*<\s*\w+\.length\s*;'
+    severity: low
+    category: performance
+    message: "Array .length accessed on every iteration; cache the length"
+
+  - id: js-spread-in-reduce
+    pattern: '\.reduce\s*\(\s*\([^)]*\)\s*=>\s*\(\s*\{[^}]*\.\.\.'
+    severity: medium
+    category: performance
+    message: "Object spread inside reduce creates O(n^2) copies; use Object.assign or mutation"
+
+  - id: js-nested-await-loop
+    pattern: 'for\s*\([^)]*\)\s*\{[^}]*await\b'
+    severity: medium
+    category: performance
+    message: "Sequential await in loop; consider Promise.all for parallel execution"
+
+  - id: js-large-bundle-import
+    pattern: "import\\s+\\w+\\s+from\\s+['\"](?:lodash|moment|rxjs)['\"]"
+    severity: medium
+    category: performance
+    message: "Importing entire library; use specific sub-path imports to reduce bundle size"

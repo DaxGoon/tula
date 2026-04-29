@@ -1,0 +1,39 @@
+categories:
+  security:
+    description: Vulnerabilities, secrets, unsafe functions, injection risks, dependency CVEs
+    weight_rationale: Highest weight -- security failures can be catastrophic
+    references: [OWASP Top 10, CWE Database, CERT]
+
+  reliability:
+    description: Bugs, crashes, null dereferences, resource leaks, type errors
+    weight_rationale: High weight -- reliability failures affect all users
+    references: [CERT, ISO C/C++ Standards]
+
+  performance:
+    description: Inefficient patterns, unnecessary copies, algorithmic issues, resource waste
+    weight_rationale: Standard weight -- performance matters but rarely crashes
+    references: [Google Performance Guide]
+
+  maintainability:
+    description: Complexity, style, naming, dead code, duplication, convention violations
+    weight_rationale: Lower weight -- affects velocity, not correctness
+    references: [Clean Code, PEP 8, Google Style Guides]
+
+  documentation:
+    description: Missing or misleading docs, incomplete READMEs, stale comments, API doc gaps
+    weight_rationale: Lowest weight -- important but subjective
+    references: [Divio Documentation System]
+
+severities:
+  critical:
+    description: Exploitable vulnerability or data-loss risk
+    penalty: 200
+  high:
+    description: Likely bug or significant security concern
+    penalty: 100
+  medium:
+    description: Potential issue warranting investigation
+    penalty: 25
+  low:
+    description: Minor style or informational finding
+    penalty: 5

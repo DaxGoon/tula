@@ -1,0 +1,73 @@
+language: cpp
+category: maintainability
+
+tools:
+  - id: clang-tidy-readability
+    name: Clang-Tidy Readability and Modernize Checks
+    purpose: Enforce readability conventions and modern C++ idioms
+    install: "brew install llvm (macOS) or apt install clang-tidy (Debian/Ubuntu)"
+    invocation:
+      command: "clang-tidy {file} --checks=-*,readability-*,modernize-*"
+      timeout: 120
+      output_format: lines
+      output_parse_pattern: '(.+):(\d+):(\d+): (error|warning): (.+) \[([^\]]+)\]'
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "readability-*": maintainability
+      "modernize-*": maintainability
+    fields:
+      message: 5
+      severity: 4
+      line: 2
+      rule: 6
+
+  - id: cppcheck-style
+    name: Cppcheck Style Checks
+    purpose: Detect style issues and code smells
+    install: "brew install cppcheck (macOS) or apt install cppcheck (Debian/Ubuntu)"
+    invocation:
+      command: "cppcheck --xml --xml-version=2 --enable=style {file}"
+      timeout: 60
+      output_format: xml
+      output_stream: stderr
+    severity_map:
+      error: high
+      warning: medium
+      style: low
+      performance: medium
+      portability: low
+      information: low
+    category_map:
+      "*": maintainability
+    fields:
+      message: "msg"
+      severity: "severity"
+      line: "location.line"
+      rule: "id"
+
+patterns:
+  - id: todo-comment
+    pattern: '//.*\b(TODO|FIXME|HACK|XXX)\b'
+    flags: IGNORECASE
+    severity: low
+    category: maintainability
+    message: "TODO/FIXME comment found -- consider addressing or filing a ticket"
+
+thresholds:
+  - id: deep-nesting
+    metric: nesting_depth
+    operator: ">"
+    value: 5
+    severity: medium
+    category: maintainability
+    message: "Deep nesting detected -- consider extracting functions or early returns"
+
+  - id: line-too-long
+    metric: line_length
+    operator: ">"
+    value: 120
+    severity: low
+    category: maintainability
+    message: "Line exceeds 120 characters -- consider breaking it up"

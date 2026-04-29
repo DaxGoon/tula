@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Validate rules
+        run: bash tests/validate-rules.sh
+
+      - name: Run script tests
+        run: bash tests/test-scripts.sh
+
+      - name: Run scoring tests
+        run: bash tests/test-scoring.sh
+
+      - name: Self-analyse (deterministic)
+        run: bash scripts/ci.sh --project-root . --deterministic --format text

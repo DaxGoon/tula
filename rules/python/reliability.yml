@@ -1,0 +1,36 @@
+language: python
+category: reliability
+
+tools:
+  - id: mypy
+    name: MyPy
+    purpose: Static type checking for Python
+    install: "pip install mypy"
+    invocation:
+      command: "mypy --show-error-codes {files}"
+      timeout: 60
+      output_format: lines
+      line_pattern: '(?P<file>.+):(?P<line>\d+): (?P<severity>[^:]+): (?P<message>.+)'
+    severity_map:
+      error: medium
+      warning: low
+      note: low
+    category_override: reliability
+    fields:
+      message: "message"
+      severity: "severity"
+      line: "line"
+      rule: "error_code"
+
+patterns:
+  - id: bare-except
+    pattern: '\bexcept\s*:'
+    severity: medium
+    category: reliability
+    message: "Bare except catches all exceptions including SystemExit and KeyboardInterrupt"
+
+  - id: mutable-default-arg
+    pattern: 'def\s+\w+\s*\([^)]*(?:=\s*\[\s*\]|=\s*\{\s*\}|=\s*set\s*\(\s*\))'
+    severity: medium
+    category: reliability
+    message: "Mutable default argument; use None and assign inside the function body"

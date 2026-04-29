@@ -1,0 +1,78 @@
+language: java
+category: security
+
+tools:
+  - id: findsecbugs
+    name: FindSecBugs
+    purpose: Security-focused static analysis via SpotBugs plugin
+    install: "Download FindSecBugs plugin JAR from https://find-sec-bugs.github.io/"
+    invocation:
+      command: "spotbugs -textui -xml -effort:max -pluginList findsecbugs-plugin.jar {files}"
+      timeout: 300
+      output_format: xml
+    severity_map:
+      1: high
+      2: medium
+      3: low
+    category_override: security
+    fields:
+      message: "LongMessage"
+      severity: "priority"
+      line: "SourceLine.start"
+      rule: "type"
+
+  - id: owasp-dependency-check
+    name: OWASP Dependency-Check
+    purpose: Scan project dependencies for known CVEs
+    install: "brew install dependency-check  # or download from https://owasp.org/www-project-dependency-check/"
+    invocation:
+      command: "dependency-check --project {project_root} --scan {project_root} --format JSON --out {project_root}/dependency-check-report"
+      timeout: 600
+      output_format: json
+    severity_map:
+      CRITICAL: critical
+      HIGH: high
+      MEDIUM: medium
+      LOW: low
+    category_override: security
+    fields:
+      message: "description"
+      severity: "severity"
+      line: null
+      rule: "name"
+
+patterns:
+  - id: java-sql-injection
+    pattern: '(Statement|Connection)\s*\.\s*(execute|prepareStatement)\s*\([^)]*\+'
+    severity: critical
+    category: security
+    message: "Potential SQL injection via string concatenation; use parameterised queries"
+    exclude: ["test", "Test"]
+
+  - id: java-hardcoded-secrets
+    pattern: '(password|secret|key|token)\s*=\s*"[^"]{8,}"'
+    flags: IGNORECASE
+    severity: high
+    category: security
+    message: "Hardcoded secret detected; use environment variables or a secrets vault"
+    exclude: ["test", "Test", "example", "mock"]
+
+  - id: java-xxe-vulnerable
+    pattern: 'DocumentBuilderFactory\.newInstance\(\)'
+    severity: high
+    category: security
+    message: "XML parser may be vulnerable to XXE; disable external entity processing"
+    exclude: ["test", "Test"]
+
+  - id: java-weak-crypto
+    pattern: 'Cipher\.getInstance\s*\(\s*"(DES|RC4|MD5|SHA1)'
+    severity: high
+    category: security
+    message: "Weak cryptographic algorithm; use AES-256 or SHA-256 minimum"
+
+  - id: java-deserialization
+    pattern: '\bObjectInputStream\s*\('
+    severity: high
+    category: security
+    message: "Deserialisation of untrusted data can lead to remote code execution"
+    exclude: ["test", "Test"]

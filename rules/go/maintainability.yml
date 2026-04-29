@@ -1,0 +1,77 @@
+language: go
+category: maintainability
+
+tools:
+  - id: golangci-lint-maintainability
+    name: golangci-lint Maintainability Linters
+    purpose: Code style and maintainability via gocyclo, gocognit, funlen, etc.
+    install: "go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
+    invocation:
+      command: "golangci-lint run --out-format json --enable gocyclo,gocognit,funlen,gofmt,goimports,misspell {files}"
+      timeout: 180
+      output_format: json
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "gocyclo": maintainability
+      "gocognit": maintainability
+      "funlen": maintainability
+      "gofmt": maintainability
+      "goimports": maintainability
+      "misspell": maintainability
+    fields:
+      message: "Text"
+      severity: "Severity"
+      line: "Pos.Line"
+      rule: "FromLinter"
+
+patterns:
+  - id: go-todo-fixme
+    pattern: '//.*\b(TODO|FIXME|HACK|XXX)\b'
+    severity: low
+    category: maintainability
+    message: "Unresolved TODO/FIXME comment"
+
+  - id: go-init-function
+    pattern: 'func\s+init\s*\(\s*\)\s*\{'
+    severity: low
+    category: maintainability
+    message: "init() functions complicate testing and initialisation order; prefer explicit setup"
+
+  - id: go-blank-identifier-import
+    pattern: '_\s+"[^"]*"'
+    severity: low
+    category: maintainability
+    message: "Blank import for side effects reduces clarity; document the reason"
+
+  - id: go-large-interface
+    pattern: 'type\s+\w+\s+interface\s*\{'
+    severity: low
+    category: maintainability
+    message: "Large interfaces violate interface segregation; prefer small focused interfaces"
+
+thresholds:
+  - id: go-function-too-long
+    metric: function_lines
+    operator: ">"
+    value: 50
+    severity: medium
+    category: maintainability
+    message: "Function exceeds 50 lines; consider extracting sub-functions"
+
+  - id: go-deep-nesting
+    metric: nesting_depth
+    operator: ">"
+    value: 4
+    severity: medium
+    category: maintainability
+    message: "Nesting depth exceeds 4 levels; flatten with early returns or extraction"
+
+  - id: go-cyclomatic-complexity
+    metric: cyclomatic_complexity
+    operator: ">"
+    value: 10
+    severity: medium
+    category: maintainability
+    message: "Cyclomatic complexity exceeds 10; simplify control flow"

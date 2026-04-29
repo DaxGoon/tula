@@ -1,0 +1,91 @@
+language: python
+category: maintainability
+
+tools:
+  - id: pylint
+    name: Pylint
+    purpose: Comprehensive Python linter for code quality and convention enforcement
+    install: "pip install pylint"
+    invocation:
+      command: "pylint --output-format=json --disable=C0114,C0115,C0116 {files}"
+      timeout: 60
+      output_format: json
+      default_disable: ["C0114", "C0115", "C0116"]
+    severity_map:
+      error: high
+      warning: medium
+      refactor: low
+      convention: low
+      info: low
+    category_map:
+      "W1*": security
+      "E1*": security
+      "E0*": reliability
+      "F*": reliability
+      "W0622": performance
+      "R1729": performance
+      "C0200": performance
+      "*": maintainability
+    fields:
+      message: "message"
+      severity: "type"
+      line: "line"
+      column: "column"
+      rule: "message-id"
+
+  - id: flake8
+    name: Flake8
+    purpose: Style guide enforcement and logical error detection
+    install: "pip install flake8"
+    invocation:
+      command: "flake8 --max-line-length=88 --ignore=E203,W503 {files}"
+      timeout: 30
+      output_format: lines
+      line_pattern: '(?P<file>.+):(?P<line>\d+):(?P<column>\d+): (?P<code>[A-Z]\d+) (?P<message>.+)'
+      default_max_line_length: 88
+      default_ignore: ["E203", "W503"]
+    severity_map:
+      "E9*": high
+      "E7*": medium
+      "W*": low
+      "*": low
+    category_override: maintainability
+    fields:
+      message: "message"
+      severity: "code"
+      line: "line"
+      column: "column"
+      rule: "code"
+
+patterns:
+  - id: todo-comment
+    pattern: '#.*\b(TODO|FIXME|HACK|XXX)\b'
+    flags: IGNORECASE
+    severity: low
+    category: maintainability
+    message: "TODO/FIXME comment found -- consider addressing"
+
+thresholds:
+  - id: function-too-long
+    metric: function_lines
+    operator: ">"
+    value: 50
+    severity: medium
+    category: maintainability
+    message: "Function is too long ({actual} lines exceeds {value})"
+
+  - id: deep-nesting
+    metric: nesting_depth
+    operator: ">"
+    value: 4
+    severity: medium
+    category: maintainability
+    message: "Code is deeply nested (level {actual} exceeds {value})"
+
+  - id: cyclomatic-complexity
+    metric: cyclomatic_complexity
+    operator: ">"
+    value: 10
+    severity: medium
+    category: maintainability
+    message: "Cyclomatic complexity too high ({actual} exceeds {value})"

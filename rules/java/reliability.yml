@@ -1,0 +1,86 @@
+language: java
+category: reliability
+
+tools:
+  - id: spotbugs
+    name: SpotBugs
+    purpose: Static analysis for bug detection in Java bytecode
+    install: "brew install spotbugs  # or download from https://spotbugs.github.io/"
+    invocation:
+      command: "spotbugs -textui -xml -effort:max {files}"
+      timeout: 300
+      output_format: xml
+    severity_map:
+      1: high
+      2: medium
+      3: low
+    category_map:
+      "CORRECTNESS": reliability
+      "MT_CORRECTNESS": reliability
+      "BAD_PRACTICE": reliability
+      "PERFORMANCE": performance
+      "STYLE": maintainability
+    fields:
+      message: "LongMessage"
+      severity: "priority"
+      line: "SourceLine.start"
+      rule: "type"
+
+  - id: pmd-reliability
+    name: PMD
+    purpose: Source-level bug and code quality analysis
+    install: "brew install pmd  # or download from https://pmd.github.io/"
+    invocation:
+      command: "pmd check -f json -d {project_root} -R rulesets/java/quickstart.xml"
+      timeout: 180
+      output_format: json
+    severity_map:
+      1: critical
+      2: high
+      3: medium
+      4: low
+      5: low
+    category_map:
+      "errorprone": reliability
+      "bestpractices": reliability
+      "design": maintainability
+      "performance": performance
+      "codestyle": maintainability
+    fields:
+      message: "message"
+      severity: "priority"
+      line: "beginLine"
+      rule: "rule"
+
+patterns:
+  - id: java-system-exit
+    pattern: '\bSystem\.exit\s*\('
+    severity: medium
+    category: reliability
+    message: "System.exit() terminates the JVM; throw an exception or return an error code"
+    exclude: ["test", "Test", "Main.java"]
+
+  - id: java-catch-generic-exception
+    pattern: '\bcatch\s*\(\s*Exception\b'
+    severity: medium
+    category: reliability
+    message: "Catching generic Exception masks specific failures; catch specific types"
+    exclude: ["test", "Test"]
+
+  - id: java-catch-throwable
+    pattern: '\bcatch\s*\(\s*Throwable\b'
+    severity: high
+    category: reliability
+    message: "Catching Throwable includes unrecoverable errors; catch Exception at most"
+
+  - id: java-null-return
+    pattern: 'return\s+null\s*;'
+    severity: low
+    category: reliability
+    message: "Returning null may cause NullPointerException downstream; consider Optional"
+
+  - id: java-empty-catch
+    pattern: 'catch\s*\([^)]*\)\s*\{\s*\}'
+    severity: medium
+    category: reliability
+    message: "Empty catch block silently swallows exceptions"

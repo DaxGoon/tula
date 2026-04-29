@@ -1,0 +1,77 @@
+language: go
+category: security
+
+tools:
+  - id: govulncheck
+    name: govulncheck
+    purpose: Scan Go modules for known vulnerabilities
+    install: "go install golang.org/x/vuln/cmd/govulncheck@latest"
+    invocation:
+      command: "govulncheck -json ./..."
+      timeout: 180
+      output_format: json
+    severity_map:
+      HIGH: high
+      MEDIUM: medium
+      LOW: low
+    category_override: security
+    fields:
+      message: "osv.summary"
+      severity: "osv.database_specific.severity"
+      line: null
+      rule: "osv.id"
+
+  - id: golangci-lint-security
+    name: golangci-lint Security Linters
+    purpose: Security-focused linters via golangci-lint (gosec, exhaustive)
+    install: "go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
+    invocation:
+      command: "golangci-lint run --out-format json --enable gosec,exhaustive {files}"
+      timeout: 180
+      output_format: json
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "gosec": security
+    fields:
+      message: "Text"
+      severity: "Severity"
+      line: "Pos.Line"
+      rule: "FromLinter"
+
+patterns:
+  - id: go-hardcoded-secrets
+    pattern: '(password|secret|key|token)\s*[:=]\s*"[^"]{8,}"'
+    flags: IGNORECASE
+    severity: high
+    category: security
+    message: "Hardcoded secret detected; use environment variables or a secrets manager"
+    exclude: ["_test.go", "testdata", "example"]
+
+  - id: go-unsafe-import
+    pattern: '"unsafe"'
+    severity: medium
+    category: security
+    message: "Unsafe package bypasses Go type safety and memory safety guarantees"
+    exclude: ["_test.go"]
+
+  - id: go-tls-insecure
+    pattern: 'InsecureSkipVerify\s*:\s*true'
+    severity: high
+    category: security
+    message: "TLS certificate verification disabled; this enables MITM attacks"
+    exclude: ["_test.go", "testdata"]
+
+  - id: go-exec-command
+    pattern: 'exec\.Command\s*\([^"]*\+'
+    severity: high
+    category: security
+    message: "Command injection risk via string concatenation in exec.Command"
+    exclude: ["_test.go"]
+
+  - id: go-weak-rand
+    pattern: '"math/rand"'
+    severity: medium
+    category: security
+    message: "math/rand is not cryptographically secure; use crypto/rand for security contexts"

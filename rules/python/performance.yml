@@ -1,0 +1,43 @@
+language: python
+category: performance
+
+tools:
+  - id: pylint-performance
+    name: Pylint (performance subset)
+    purpose: Detect performance-related issues via pylint message IDs
+    install: "pip install pylint"
+    invocation:
+      command: "pylint --output-format=json --enable=W0622,R1729,C0200 --disable=all {files}"
+      timeout: 60
+      output_format: json
+    severity_map:
+      error: high
+      warning: medium
+      refactor: low
+      convention: low
+    category_override: performance
+    fields:
+      message: "message"
+      severity: "type"
+      line: "line"
+      column: "column"
+      rule: "message-id"
+    enabled_checks:
+      - W0622  # redefined-builtin
+      - R1729  # use-a-generator
+      - C0200  # consider-using-enumerate
+
+patterns:
+  - id: string-concat-in-loop
+    pattern: 'for\s+.+\s+in\s+.+:\s*\n(?:\s+.*\n)*?\s+\w+\s*\+=\s*["\x27]'
+    flags: MULTILINE
+    severity: medium
+    category: performance
+    message: "String concatenation in loop; use str.join() or io.StringIO instead"
+
+  - id: list-comprehension-opportunity
+    pattern: '(\w+)\s*=\s*\[\s*\]\s*\n\s*for\s+(\w+)\s+in\s+'
+    flags: MULTILINE
+    severity: low
+    category: performance
+    message: "Manual list building; consider using a list comprehension"

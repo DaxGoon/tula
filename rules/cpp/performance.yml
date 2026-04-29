@@ -1,0 +1,49 @@
+language: cpp
+category: performance
+
+tools:
+  - id: clang-tidy-performance
+    name: Clang-Tidy Performance Checks
+    purpose: Detect performance anti-patterns and inefficient constructs
+    install: "brew install llvm (macOS) or apt install clang-tidy (Debian/Ubuntu)"
+    invocation:
+      command: "clang-tidy {file} --checks=-*,performance-*"
+      timeout: 120
+      output_format: lines
+      output_parse_pattern: '(.+):(\d+):(\d+): (error|warning): (.+) \[([^\]]+)\]'
+    severity_map:
+      error: high
+      warning: medium
+    category_map:
+      "performance-*": performance
+    fields:
+      message: 5
+      severity: 4
+      line: 2
+      rule: 6
+
+  - id: cppcheck-performance
+    name: Cppcheck Performance Checks
+    purpose: Detect inefficient code patterns and unnecessary overhead
+    install: "brew install cppcheck (macOS) or apt install cppcheck (Debian/Ubuntu)"
+    invocation:
+      command: "cppcheck --xml --xml-version=2 --enable=performance {file}"
+      timeout: 60
+      output_format: xml
+      output_stream: stderr
+    severity_map:
+      error: high
+      warning: medium
+      style: low
+      performance: medium
+      portability: low
+      information: low
+    category_map:
+      "*performance*": performance
+      "*inefficient*": performance
+      "*slow*": performance
+    fields:
+      message: "msg"
+      severity: "severity"
+      line: "location.line"
+      rule: "id"

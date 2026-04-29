@@ -1,0 +1,51 @@
+language: all
+category: documentation
+
+semantic:
+  - id: DOC-API-001
+    name: Excessive Docstring Coverage
+    severity: medium
+    guidance: |
+      Clean code should be self-documenting. Excessive docstrings
+      indicate poor naming, unclear abstractions, or cargo-cult
+      documentation habits.
+
+      Flag projects where >50% of public functions have docstrings
+      or doc-comments as medium severity. This suggests the codebase
+      relies on comments instead of expressive names and clear structure.
+
+      Exceptions (do NOT flag docstrings on these):
+      - Public library APIs consumed by external users
+      - Complex algorithms where the "why" is non-obvious
+      - Regulatory or compliance-mandated documentation
+
+      Scoring:
+      - >70% coverage: severity medium (over-documented)
+      - 50-70% coverage: severity low (mildly verbose)
+      - <50% coverage: no finding (appropriately lean)
+
+  - id: DOC-API-002
+    name: Stale API Documentation
+    severity: high
+    guidance: |
+      For documented public functions, check whether the documentation
+      matches the actual implementation:
+      - Do documented parameters match function signature?
+      - Do documented return types match actual returns?
+      - Do documented exceptions/errors match what the code raises?
+      - Are documented examples consistent with current API?
+
+      Stale docs are worse than no docs. Only flag clear mismatches.
+
+  - id: DOC-API-003
+    name: Redundant Docstrings
+    severity: low
+    guidance: |
+      Flag docstrings that merely restate the function name or signature:
+      - "Returns the user" on get_user()
+      - "Initializes the class" on __init__()
+      - "Sets the value" on set_value()
+      - Parameter descriptions that just repeat the type annotation
+
+      These add noise without value. The function name should convey
+      intent; if it doesn't, rename it instead of adding a docstring.

@@ -1,0 +1,70 @@
+language: python
+category: security
+
+tools:
+  - id: bandit
+    name: Bandit
+    purpose: Security-focused static analysis for Python code
+    install: "pip install bandit"
+    invocation:
+      command: "bandit -f json -q {files}"
+      timeout: 30
+      output_format: json
+    severity_map:
+      HIGH: high
+      MEDIUM: medium
+      LOW: low
+    category_override: security
+    fields:
+      message: "issue_text"
+      severity: "issue_severity"
+      line: "line_number"
+      rule: "test_name"
+      confidence: "issue_confidence"
+
+  - id: safety
+    name: Safety
+    purpose: Check Python dependencies for known security vulnerabilities
+    install: "pip install safety"
+    invocation:
+      command: "safety check --json --file {requirements_file}"
+      timeout: 30
+      output_format: json
+    severity_map:
+      ANY: high
+    category_override: security
+    fields:
+      message: "advisory"
+      severity: null
+      line: null
+      rule: "vulnerability_id"
+      package: "package"
+      version: "installed_version"
+
+patterns:
+  - id: hardcoded-secret
+    pattern: '(?:password|secret|api_key|token|auth)\s*=\s*["\x27][^"\x27]{4,}["\x27]'
+    flags: IGNORECASE
+    severity: high
+    category: security
+    message: "Possible hardcoded secret or credential"
+    exclude: ["test_", "fixture", "example", "mock"]
+
+  - id: eval-usage
+    pattern: '\beval\s*\('
+    severity: high
+    category: security
+    message: "Use of eval() can execute arbitrary code"
+
+  - id: exec-usage
+    pattern: '\bexec\s*\('
+    severity: high
+    category: security
+    message: "Use of exec() can execute arbitrary code"
+
+  - id: insecure-random
+    pattern: '\brandom\.(random|randint|choice|shuffle|sample)\b'
+    severity: medium
+    category: security
+    message: "Use of insecure random; use secrets module for security-sensitive values"
+    exclude: ["test_", "fixture"]

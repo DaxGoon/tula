@@ -1,0 +1,138 @@
+base_score: 1000
+
+category_weights:
+  security: 1.5
+  reliability: 1.2
+  performance: 1.0
+  maintainability: 0.8
+  documentation: 0.6
+
+severity_penalties:
+  critical: 200
+  high: 100
+  medium: 25
+  low: 5
+
+file_weights:
+  test_indicators: [test, spec, _test., test_]
+  test_multiplier: 0.5
+  entry_indicators: [main, __main__, app., server., index.]
+  entry_multiplier: 1.5
+  config_indicators: [config, settings, .yml, .yaml, .json, .toml]
+  config_multiplier: 1.3
+  core_indicators: [/src/, /lib/, /core/, /pkg/]
+  core_multiplier: 1.2
+  vendor_indicators: [/vendor/, /third_party/, /external/, /node_modules/]
+  vendor_multiplier: 0.3
+  minimum_weight: 0.1
+
+complexity_penalties:
+  cyclomatic:
+    threshold: 10
+    per_unit: 5
+  lines_of_code:
+    threshold: 500
+    per_100: 2
+  nesting_depth:
+    threshold: 4
+    per_level: 10
+  duplication_ratio:
+    threshold: 0.1
+    multiplier: 100
+
+project_adjustments:
+  consistency:
+    variance_threshold: 1000
+    divisor: 50
+    max_bonus: 50
+  critical_overage:
+    threshold: 5
+    penalty_per_excess: 20
+
+scoring_algorithm: |
+  Per-file scoring:
+    1. Start with base_score (1000)
+    2. For each issue: penalty = severity_penalties[severity] * category_weights[category]
+    3. Complexity penalties:
+       - cyclomatic > threshold: (value - threshold) * per_unit
+       - lines_of_code > threshold: (value - threshold) / 100 * per_100
+       - nesting_depth > threshold: (value - threshold) * per_level
+       - duplication_ratio > threshold: value * multiplier
+    4. file_score = max(0, min(1000, base_score - issue_penalties - complexity_penalties))
+
+  File weighting:
+    - Match file path against indicators (test, entry, config, core, vendor)
+    - Multiply matching multipliers together
+    - Clamp to minimum_weight
+
+  Project scoring:
+    1. weighted_average = sum(file_score * file_weight) / sum(file_weight)
+    2. Consistency bonus: if variance(file_scores) < variance_threshold,
+       bonus = min(max_bonus, (variance_threshold - variance) / divisor)
+    3. Critical overage: if critical_count > threshold,
+       penalty = (critical_count - threshold) * penalty_per_excess
+    4. project_score = max(0, min(1000, weighted_average + bonus - penalty))
+
+profiles:
+  default:
+    description: Balanced analysis suitable for most projects
+    thresholds: { pass: 800, warn: 600, fail: 400 }
+
+  strict:
+    description: All checks enabled with higher standards
+    thresholds: { pass: 900, warn: 750, fail: 600 }
+    category_weights:
+      security: 2.0
+      reliability: 1.5
+      maintainability: 1.2
+
+  security:
+    description: Security-focused analysis
+    thresholds: { pass: 950, warn: 800, fail: 600 }
+    category_weights:
+      security: 3.0
+      reliability: 1.5
+      maintainability: 0.3
+    severity_penalties:
+      critical: 300
+
+  performance:
+    description: Performance and efficiency focused
+    thresholds: { pass: 850, warn: 700, fail: 500 }
+    category_weights:
+      performance: 2.0
+      reliability: 1.5
+      security: 0.8
+      maintainability: 1.2
+
+  fast:
+    description: Quick analysis using only fast tools
+    thresholds: { pass: 700, warn: 500, fail: 300 }
+
+  docs:
+    description: Documentation quality focused
+    thresholds: { pass: 700, warn: 500, fail: 300 }
+    category_weights:
+      documentation: 2.0
+      maintainability: 1.0
+      security: 0.5
+
+default_exclude:
+  - "*.pyc"
+  - __pycache__/
+  - .git/
+  - .venv/
+  - venv/
+  - node_modules/
+  - build/
+  - dist/
+  - .tox/
+  - vendor/
+  - third_party/
+  - "*.min.js"
+  - "*.bundle.js"
+  - package-lock.json
+  - yarn.lock
+  - go.sum
+
+max_file_size_bytes: 1048576

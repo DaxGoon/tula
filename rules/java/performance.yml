@@ -1,0 +1,40 @@
+language: java
+category: performance
+
+patterns:
+  - id: java-string-concat-loop
+    pattern: 'for\s*\([^)]*\)\s*\{[^}]*\+\s*=\s*"'
+    severity: medium
+    category: performance
+    message: "String concatenation in loop creates O(n^2) copies; use StringBuilder"
+
+  - id: java-synchronized-method
+    pattern: 'synchronized\s+(public|private|protected|static)'
+    severity: medium
+    category: performance
+    message: "Synchronized method locks the entire object; prefer fine-grained locking"
+
+  - id: java-new-in-loop
+    pattern: 'for\s*\([^)]*\)\s*\{[^}]*new\s+(Date|SimpleDateFormat|DecimalFormat)\s*\('
+    severity: medium
+    category: performance
+    message: "Object allocation in loop; create once outside the loop and reuse"
+
+  - id: java-autoboxing-loop
+    pattern: 'for\s*\([^)]*\)\s*\{[^}]*(Integer|Long|Double|Float|Boolean)\s*\w+\s*='
+    severity: low
+    category: performance
+    message: "Autoboxing inside loop creates unnecessary wrapper objects; use primitive types"
+
+  - id: java-reflection-hot-path
+    pattern: '\b(getMethod|getDeclaredMethod|getField|getDeclaredField)\s*\('
+    severity: medium
+    category: performance
+    message: "Reflection is expensive; cache Method/Field references or use direct access"
+    exclude: ["test", "Test", "framework"]
+
+  - id: java-regex-compile-inline
+    pattern: 'Pattern\.compile\s*\([^)]*\)\s*\.\s*matcher'
+    severity: low
+    category: performance
+    message: "Pattern compiled and discarded; cache the compiled Pattern as a static field"

@@ -1,0 +1,89 @@
+language: all
+category: documentation
+
+patterns:
+  - id: DOC-INLINE-001
+    description: Stale TODO/FIXME comments
+    check: age_check
+    pattern: '(TODO|FIXME|HACK|XXX)'
+    flags: IGNORECASE
+    severity: low
+    message: "TODO/FIXME comment found -- check if still relevant"
+
+semantic:
+  - id: DOC-INLINE-010
+    name: Misleading Comments
+    severity: high
+    guidance: |
+      Identify comments that contradict what the code actually does.
+      A wrong comment is worse than no comment.
+
+      Examples of misleading comments:
+      - Comment says "returns true if valid" but function returns false
+      - Comment says "iterates over users" but code iterates over orders
+      - Comment says "deprecated" but function is actively called
+      - Commented-out code with no explanation of why it's kept
+
+      Only flag clear contradictions. Do not flag comments that are
+      merely incomplete or terse.
+
+  - id: DOC-INLINE-015
+    name: Obvious Comments
+    severity: medium
+    guidance: |
+      Flag comments that restate what the code already says:
+      - "increment counter" above `counter += 1`
+      - "loop through items" above `for item in items`
+      - "check if null" above `if x is None`
+      - "return result" above `return result`
+      - Section dividers like `# --- Helper Functions ---`
+
+      Comments should explain WHY, not WHAT. If the code needs a
+      comment to explain what it does, the code should be rewritten
+      with better names instead.
+
+  - id: DOC-INLINE-020
+    name: Magic Numbers and Strings
+    severity: low
+    guidance: |
+      Flag numeric or string literals used in logic without explanation.
+      The fix is to extract to a named constant, not to add a comment.
+
+      - Threshold values (e.g., `if count > 42`)
+      - Timeout values (e.g., `sleep(300)`)
+      - Status codes (e.g., `if code == 3`)
+      - Configuration strings without context
+
+      Exclude: 0, 1, -1, 2 (common idioms), HTTP status codes (200, 404, etc.),
+      string literals in print/log statements, test assertions.
+
+      Only flag values where the meaning is genuinely unclear.
+
+  - id: DOC-INLINE-025
+    name: Commented-Out Code
+    severity: medium
+    guidance: |
+      Flag blocks of commented-out code (2+ consecutive lines).
+      Version control exists for this purpose. Commented-out code
+      creates noise, confusion about intent, and maintenance burden.
+
+      Exceptions:
+      - Single-line examples in documentation strings
+      - Code in comments that illustrates a deliberate choice (with explanation)
+
+  - id: DOC-INLINE-030
+    name: Complex Logic Without Explanation
+    severity: medium
+    guidance: |
+      Flag code blocks with high cognitive complexity that lack any
+      explanatory comment on WHY (not what):
+      - Nested conditionals (3+ levels) with no comment on intent
+      - Regular expressions without explaining what they match
+      - Bitwise operations without explaining the purpose
+      - Algorithm implementations without naming the algorithm
+
+      The threshold is: would a competent developer in this language
+      need to spend >30 seconds understanding the INTENT? If yes,
+      a brief comment on why this approach was chosen is warranted.
+      The fix should never be to describe what the code does —
+      refactor to make the what obvious instead.

@@ -1,0 +1,11 @@
+{
+  "name": "matra",
+  "version": "1.0.0",
+  "description": "LLM-native code quality, security, and documentation analysis on a 1000-point scale",
+  "author": {
+    "name": "Ramesh Ghimire",
+    "url": "https://github.com/daxgoon"
+  },
+  "homepage": "https://github.com/daxgoon/tula",
+  "license": "MIT"
+}
