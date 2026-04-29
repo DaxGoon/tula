@@ -3,7 +3,7 @@
   "owner": { "name": "Ramesh Ghimire" },
   "plugins": [
     {
-      "name": "matra",
+      "name": "tula",
       "source": ".",
       "description": "LLM-native code quality analysis on a 1000-point scale",
       "version": "1.0.0"

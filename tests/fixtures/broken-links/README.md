@@ -2,7 +2,7 @@
 
 ## Installation
 
-Run `pip install matra`.
+Run `pip install tula`.
 
 ## Usage
 

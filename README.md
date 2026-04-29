@@ -20,7 +20,7 @@ Python, JavaScript/TypeScript, Java, Go, C/C++
 | `git` | Recommended | Diff analysis | System default |
 
 Language-specific static analysis tools (bandit, eslint, etc.) are optional.
-Matra auto-detects what is installed and skips missing tools gracefully. The
+Tula auto-detects what is installed and skips missing tools gracefully. The
 report notes reduced coverage when tools are unavailable.
 
 ## Quick Start
@@ -43,18 +43,18 @@ Or pick specific languages: `--lang python`, `--lang js`, `--lang go`, `--lang j
 
 ```
 /plugin marketplace add daxgoon/tula
-/plugin install matra@daxgoon-tools
+/plugin install tula@daxgoon-tools
 ```
 
 ### Claude Code Manual Install
 
 ```bash
-git clone https://github.com/daxgoon/tula.git ~/matra
-bash ~/matra/install.sh
+git clone https://github.com/daxgoon/tula.git ~/tula
+bash ~/tula/install.sh
 ```
 
-This clones the repository and links the `/matra` skill into Claude Code.
-After installation, type `/matra` in any project to run an analysis.
+This clones the repository and links the `/tula` skill into Claude Code.
+After installation, type `/tula` in any project to run an analysis.
 
 ### Per-Project (team usage)
 
@@ -62,11 +62,11 @@ Add as a git submodule so every team member gets it on clone:
 
 ```bash
 cd <your-project>
-git submodule add https://github.com/daxgoon/tula.git .matra/plugin
-mkdir -p .claude/skills/matra
-ln -s ../../.matra/plugin/adapters/claude-code/SKILL.md .claude/skills/matra/SKILL.md
-git add .matra .claude/skills/matra
-git commit -m "Add matra code quality analysis"
+git submodule add https://github.com/daxgoon/tula.git .tula/plugin
+mkdir -p .claude/skills/tula
+ln -s ../../.tula/plugin/adapters/claude-code/SKILL.md .claude/skills/tula/SKILL.md
+git add .tula .claude/skills/tula
+git commit -m "Add tula code quality analysis"
 ```
 
 Developers cloning the project run `git submodule update --init` to activate.
@@ -74,43 +74,43 @@ Developers cloning the project run `git submodule update --init` to activate.
 ### GitHub Copilot
 
 ```bash
-cp ~/matra/adapters/copilot/copilot-instructions.md <project>/.github/copilot-instructions.md
+cp ~/tula/adapters/copilot/copilot-instructions.md <project>/.github/copilot-instructions.md
 ```
 
 ### Cursor
 
 ```bash
-cp ~/matra/adapters/cursor/matra.mdc <project>/.cursor/rules/matra.mdc
+cp ~/tula/adapters/cursor/tula.mdc <project>/.cursor/rules/tula.mdc
 ```
 
 ### CI/CD Only (no LLM required)
 
 ```bash
-git clone https://github.com/daxgoon/tula.git ~/matra
-~/matra/scripts/ci.sh --profile default --threshold 800
+git clone https://github.com/daxgoon/tula.git ~/tula
+~/tula/scripts/ci.sh --profile default --threshold 800
 ```
 
 ## Uninstallation
 
 ```bash
-bash ~/matra/uninstall.sh
+bash ~/tula/uninstall.sh
 ```
 
 This removes the Claude Code skill link. The source directory is preserved.
-To fully remove: `rm -rf ~/matra`
+To fully remove: `rm -rf ~/tula`
 
 ## Usage
 
 ### Claude Code
 
 ```
-/matra                        # full analysis, default profile
-/matra --profile strict       # strict thresholds (900)
-/matra --profile security     # security-focused (950)
-/matra docs                   # documentation quality only
-/matra --diff HEAD~3          # analyse changed files only
-/matra --fix                  # include fix suggestions
-/matra --lang python          # single language only
+/tula                        # full analysis, default profile
+/tula --profile strict       # strict thresholds (900)
+/tula --profile security     # security-focused (950)
+/tula docs                   # documentation quality only
+/tula --diff HEAD~3          # analyse changed files only
+/tula --fix                  # include fix suggestions
+/tula --lang python          # single language only
 ```
 
 The analysis runs unattended after a single permission approval. No further
@@ -119,7 +119,7 @@ input required.
 ### CI/CD
 
 ```bash
-~/matra/scripts/ci.sh [OPTIONS]
+~/tula/scripts/ci.sh [OPTIONS]
 
 Options:
   --profile PROFILE     Scoring profile (default: default)
@@ -194,7 +194,7 @@ apt install clang-tidy cppcheck   # Ubuntu/Debian
 
 ### Project Overrides
 
-Create `.matra/overrides.yml` in your project root:
+Create `.tula/overrides.yml` in your project root:
 
 ```yaml
 disable: [todo-comment, line-too-long]
@@ -209,7 +209,7 @@ exclude_paths: ["generated/**"]
 
 ### Custom Rules
 
-Add YAML files to `.matra/rules/<language>/<category>.yml`:
+Add YAML files to `.tula/rules/<language>/<category>.yml`:
 
 ```yaml
 language: python
@@ -227,10 +227,10 @@ Rules with matching `id` fields replace base rules. New rules are appended.
 
 ### Override Priority
 
-1. Base rules (`~/matra/rules/`) — shipped with matra
-2. Project rules (`.matra/rules/`) — committed to project repo
-3. Project overrides (`.matra/overrides.yml`) — disable/adjust rules
-4. Personal overrides (`~/.config/matra/overrides.yml`) — developer preference
+1. Base rules (`~/tula/rules/`) — shipped with tula
+2. Project rules (`.tula/rules/`) — committed to project repo
+3. Project overrides (`.tula/overrides.yml`) — disable/adjust rules
+4. Personal overrides (`~/.config/tula/overrides.yml`) — developer preference
 
 ## Architecture
 
@@ -252,7 +252,7 @@ tula/
 │   ├── scan-*.sh       Per-language scan scripts (6)
 │   └── ci.sh           CI/CD wrapper with exit codes
 ├── skills/             Claude Code plugin skill
-│   └── matra/          /matra slash command
+│   └── tula/          /tula slash command
 ├── adapters/           Platform-specific integration
 │   ├── claude-code/    SKILL.md for manual install
 │   ├── copilot/        GitHub Copilot instructions
@@ -269,7 +269,7 @@ does the interpretation, scoring, and reporting.
 ## Updating
 
 ```bash
-cd ~/matra && git pull
+cd ~/tula && git pull
 ```
 
 Rules, scripts, and the skill prompt are updated in place. No reinstallation

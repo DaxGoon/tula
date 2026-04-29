@@ -1,6 +1,6 @@
-# Matra — Code Quality Analysis
+# Tula — Code Quality Analysis
 
-Matra analyses code quality, security, and documentation using YAML rules,
+Tula analyses code quality, security, and documentation using YAML rules,
 bash scripts, and LLM reasoning. It produces a scored report on a 1000-point
 scale across five categories: security, reliability, performance,
 maintainability, and documentation.
@@ -22,12 +22,12 @@ Python, JavaScript/TypeScript, Java, Go, C/C++.
 
 ```
 # In Claude Code:
-/matra
+/tula
 
 # With options:
-/matra --profile strict
-/matra --diff HEAD~3
-/matra docs
+/tula --profile strict
+/tula --diff HEAD~3
+/tula docs
 ```
 
 ## Scoring
@@ -41,8 +41,8 @@ Python, JavaScript/TypeScript, Java, Go, C/C++.
 
 ## Extending Rules
 
-Add project-specific rules in `.matra/rules/<language>/<category>.yml`.
-Override settings in `.matra/overrides.yml`:
+Add project-specific rules in `.tula/rules/<language>/<category>.yml`.
+Override settings in `.tula/overrides.yml`:
 
 ```yaml
 disable: [todo-comment]
@@ -54,6 +54,6 @@ profile: strict
 ## CI/CD
 
 ```bash
-~/matra/scripts/ci.sh --profile default --threshold 800
+~/tula/scripts/ci.sh --profile default --threshold 800
 # Exit: 0=pass, 1=warn, 2=fail, 3=error
 ```

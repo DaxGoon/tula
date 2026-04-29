@@ -2,17 +2,17 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/DaxGoon/tula.git"
-MATRA_HOME="${MATRA_HOME:-$HOME/matra}"
-SKILL_DIR="$HOME/.claude/skills/matra"
+TULA_HOME="${TULA_HOME:-$HOME/tula}"
+SKILL_DIR="$HOME/.claude/skills/tula"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 usage() {
   echo "Usage: install.sh [OPTIONS]"
   echo ""
-  echo "Install matra as a Claude Code skill."
+  echo "Install tula as a Claude Code skill."
   echo ""
   echo "Options:"
-  echo "  --home DIR      Install directory (default: ~/matra)"
+  echo "  --home DIR      Install directory (default: ~/tula)"
   echo "  --all-tools     Install all supported language tools"
   echo "  --lang LANG     Install tools for specific language (python|js|go|java|cpp)"
   echo "  --help          Show this help"
@@ -23,7 +23,7 @@ INSTALL_LANGS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --home) MATRA_HOME="$2"; shift 2 ;;
+    --home) TULA_HOME="$2"; shift 2 ;;
     --all-tools) INSTALL_ALL=true; shift ;;
     --lang) INSTALL_LANGS+=("$2"); shift 2 ;;
     --help) usage; exit 0 ;;
@@ -31,7 +31,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-echo "Installing matra..."
+echo "Installing tula..."
 
 # --- Prerequisites ---
 
@@ -67,27 +67,27 @@ done
 # --- Clone or locate repo ---
 
 if [[ -f "$SCRIPT_DIR/adapters/claude-code/SKILL.md" ]]; then
-  MATRA_HOME="$SCRIPT_DIR"
+  TULA_HOME="$SCRIPT_DIR"
   echo ""
-  echo "  Source: $MATRA_HOME (local)"
-elif [[ ! -f "$MATRA_HOME/adapters/claude-code/SKILL.md" ]]; then
+  echo "  Source: $TULA_HOME (local)"
+elif [[ ! -f "$TULA_HOME/adapters/claude-code/SKILL.md" ]]; then
   echo ""
-  echo "  Cloning tula into $MATRA_HOME..."
-  git clone "$REPO_URL" "$MATRA_HOME"
+  echo "  Cloning tula into $TULA_HOME..."
+  git clone "$REPO_URL" "$TULA_HOME"
 fi
 
-if [[ ! -f "$MATRA_HOME/adapters/claude-code/SKILL.md" ]]; then
-  echo "Error: matra not found at $MATRA_HOME" >&2
+if [[ ! -f "$TULA_HOME/adapters/claude-code/SKILL.md" ]]; then
+  echo "Error: tula not found at $TULA_HOME" >&2
   exit 1
 fi
 
 # --- Link skill ---
 
 mkdir -p "$SKILL_DIR"
-ln -sf "$MATRA_HOME/adapters/claude-code/SKILL.md" "$SKILL_DIR/SKILL.md"
+ln -sf "$TULA_HOME/adapters/claude-code/SKILL.md" "$SKILL_DIR/SKILL.md"
 echo "  Skill linked: $SKILL_DIR/SKILL.md"
 
-chmod +x "$MATRA_HOME/scripts/"*.sh
+chmod +x "$TULA_HOME/scripts/"*.sh
 echo "  Scripts: executable"
 
 # --- Language tools ---
@@ -181,10 +181,10 @@ done
 [[ $found -eq 0 ]] && echo "    (none — run with --all-tools or --lang <lang> to install)"
 
 echo ""
-echo "Done. Type /matra in Claude Code to analyse any project."
+echo "Done. Type /tula in Claude Code to analyse any project."
 echo ""
 echo "Alternatively, install as a plugin:"
 echo "  /plugin marketplace add daxgoon/tula"
-echo "  /plugin install matra@daxgoon-tools"
+echo "  /plugin install tula@daxgoon-tools"
 echo ""
-echo "To uninstall: bash $MATRA_HOME/uninstall.sh"
+echo "To uninstall: bash $TULA_HOME/uninstall.sh"

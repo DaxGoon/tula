@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILL_DIR="$HOME/.claude/skills/matra"
+SKILL_DIR="$HOME/.claude/skills/tula"
 
-echo "Uninstalling matra..."
+echo "Uninstalling tula..."
 
 # Remove Claude Code skill link
 if [[ -d "$SKILL_DIR" ]]; then
@@ -14,8 +14,8 @@ else
 fi
 
 echo ""
-echo "Done. The /matra command is no longer available in Claude Code."
+echo "Done. The /tula command is no longer available in Claude Code."
 echo ""
-echo "The matra source directory has not been removed."
+echo "The tula source directory has not been removed."
 echo "To fully remove, delete the directory manually:"
 echo "  rm -rf $(cd "$(dirname "$0")" && pwd)"

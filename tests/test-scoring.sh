@@ -91,7 +91,7 @@ text_out=$("$MATRA_ROOT/scripts/ci.sh" \
   --deterministic \
   --threshold 0 2>/dev/null) || true
 
-if echo "$text_out" | grep -q "Matra:"; then
+if echo "$text_out" | grep -q "Tula:"; then
   echo "  PASS: text output contains score header"
   PASS=$((PASS + 1))
 else

@@ -1,13 +1,13 @@
-# Matra Code Quality Analysis
+# Tula Code Quality Analysis
 
-When asked to analyse code quality, run the matra analysis workflow.
+When asked to analyse code quality, run the tula analysis workflow.
 
 ## Workflow
 
-1. Run `~/matra/scripts/detect.sh .` to identify project languages
-2. For each detected language, run `~/matra/scripts/scan-<language>.sh --project-root .`
-3. Run `~/matra/scripts/scan-docs.sh --project-root .`
-4. Read rules from `~/matra/rules/_scoring.yml` and `~/matra/rules/<language>/*.yml`
+1. Run `~/tula/scripts/detect.sh .` to identify project languages
+2. For each detected language, run `~/tula/scripts/scan-<language>.sh --project-root .`
+3. Run `~/tula/scripts/scan-docs.sh --project-root .`
+4. Read rules from `~/tula/rules/_scoring.yml` and `~/tula/rules/<language>/*.yml`
 5. Map tool findings to normalised severity (critical/high/medium/low) using
    the severity_map in each rule file
 6. Calculate score: start at 1000, deduct severity_penalty * category_weight
@@ -23,5 +23,5 @@ When asked to analyse code quality, run the matra analysis workflow.
 
 ## Project Overrides
 
-Check for `.matra/overrides.yml` in the project root. If present, apply
+Check for `.tula/overrides.yml` in the project root. If present, apply
 disabled rules, severity overrides, and profile selection before scoring.

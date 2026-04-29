@@ -55,6 +55,6 @@ Open an issue with:
 
 ## Scope
 
-Matra is deliberately minimal. Proposals that add runtime dependencies, require
+Tula is deliberately minimal. Proposals that add runtime dependencies, require
 compilation, or significantly increase complexity may be declined. When in
 doubt, open an issue to discuss before writing code.

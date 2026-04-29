@@ -1,9 +1,9 @@
-# Matra Build Instructions
+# Tula Build Instructions
 
 ## Project Structure
 
 ```
-matra/
+tula/
 ├── rules/              YAML rule definitions per language and category
 │   ├── _scoring.yml    Scoring algorithm, weights, profiles
 │   ├── _categories.yml Category and severity definitions
@@ -14,7 +14,7 @@ matra/
 │   ├── scan-*.sh       Per-language scan scripts
 │   └── ci.sh           CI/CD wrapper with exit codes
 ├── adapters/           LLM platform integration files
-│   ├── claude-code/    SKILL.md for /matra command
+│   ├── claude-code/    SKILL.md for /tula command
 │   ├── copilot/        GitHub Copilot instructions
 │   └── cursor/         Cursor rules file
 ├── tests/              Validation and smoke tests
@@ -67,12 +67,12 @@ bash tests/test-scoring.sh
 
 ### Claude Code
 ```bash
-git clone <repo> ~/matra
+git clone <repo> ~/tula
 # Skill auto-discovered from adapters/claude-code/SKILL.md
-# Usage: /matra
+# Usage: /tula
 ```
 
 ### CI/CD
 ```bash
-~/matra/scripts/ci.sh --profile default --threshold 800
+~/tula/scripts/ci.sh --profile default --threshold 800
 ```

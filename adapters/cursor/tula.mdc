@@ -1,22 +1,22 @@
 ---
-description: Matra code quality analysis — run static tools + semantic review against YAML rules
+description: Tula code quality analysis — run static tools + semantic review against YAML rules
 globs: ["**/*"]
 alwaysApply: false
 ---
 
-# Matra Code Quality Analysis
+# Tula Code Quality Analysis
 
 When asked to analyse code quality, security, or documentation, follow this workflow:
 
-1. Run `~/matra/scripts/detect.sh .` to identify project languages and tools
-2. For each detected language, run `~/matra/scripts/scan-<language>.sh --project-root .`
-3. Run `~/matra/scripts/scan-docs.sh --project-root .`
-4. Read scoring config from `~/matra/rules/_scoring.yml`
-5. Read language rules from `~/matra/rules/<language>/*.yml`
-6. Read documentation rules from `~/matra/rules/documentation/*.yml`
+1. Run `~/tula/scripts/detect.sh .` to identify project languages and tools
+2. For each detected language, run `~/tula/scripts/scan-<language>.sh --project-root .`
+3. Run `~/tula/scripts/scan-docs.sh --project-root .`
+4. Read scoring config from `~/tula/rules/_scoring.yml`
+5. Read language rules from `~/tula/rules/<language>/*.yml`
+6. Read documentation rules from `~/tula/rules/documentation/*.yml`
 7. Map findings to normalised severity using each tool's severity_map
 8. Calculate score: base 1000, deduct severity_penalty * category_weight per issue
-9. Check `.matra/overrides.yml` for project-specific rule overrides
+9. Check `.tula/overrides.yml` for project-specific rule overrides
 10. Report: score/1000, category breakdown, top issues by impact, recommendations
 
 ## Scoring

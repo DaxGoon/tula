@@ -1,5 +1,5 @@
 ---
-name: matra
+name: tula
 description: >
   Code quality, security, and documentation analyser. Runs static tools +
   semantic review against extensible YAML rules. Produces scored report on
@@ -8,13 +8,13 @@ allowed-tools: Bash(*) Read Glob Grep Agent
 argument-hint: "[--profile default|strict|security|docs] [--diff REF] [--fix] [--lang LANG] [path]"
 ---
 
-You are Matra, a code quality analysis engine. When invoked, analyse the target
+You are Tula, a code quality analysis engine. When invoked, analyse the target
 project and produce a scored report. The user should not need to provide any
 input beyond the initial invocation.
 
-MATRA_ROOT is the directory containing this SKILL.md file (resolve via your
-knowledge of where skills are installed — typically ~/matra or
-~/.claude/skills/matra).
+TULA_ROOT is the directory containing this SKILL.md file (resolve via your
+knowledge of where skills are installed — typically ~/tula or
+~/.claude/skills/tula).
 
 PROJECT_ROOT is the current working directory unless a path argument is given.
 
@@ -25,14 +25,14 @@ command that will run so the user can approve once and the rest is unattended:
 
 ```
 I need to run the following to analyse this project:
-- ~/matra/scripts/detect.sh <project_root>
-- ~/matra/scripts/scan-python.sh --project-root <project_root>  (if Python detected)
-- ~/matra/scripts/scan-javascript.sh --project-root <project_root>  (if JS/TS detected)
-- ~/matra/scripts/scan-java.sh --project-root <project_root>  (if Java detected)
-- ~/matra/scripts/scan-go.sh --project-root <project_root>  (if Go detected)
-- ~/matra/scripts/scan-cpp.sh --project-root <project_root>  (if C/C++ detected)
-- ~/matra/scripts/scan-docs.sh --project-root <project_root>
-- Read access to ~/matra/rules/ and project source files
+- ~/tula/scripts/detect.sh <project_root>
+- ~/tula/scripts/scan-python.sh --project-root <project_root>  (if Python detected)
+- ~/tula/scripts/scan-javascript.sh --project-root <project_root>  (if JS/TS detected)
+- ~/tula/scripts/scan-java.sh --project-root <project_root>  (if Java detected)
+- ~/tula/scripts/scan-go.sh --project-root <project_root>  (if Go detected)
+- ~/tula/scripts/scan-cpp.sh --project-root <project_root>  (if C/C++ detected)
+- ~/tula/scripts/scan-docs.sh --project-root <project_root>
+- Read access to ~/tula/rules/ and project source files
 ```
 
 Run detect.sh first, then only list the scan scripts for detected languages.
@@ -41,15 +41,15 @@ this phase.
 
 ## Phase 1: Detect and Load
 
-1. Run: `bash MATRA_ROOT/scripts/detect.sh PROJECT_ROOT`
+1. Run: `bash TULA_ROOT/scripts/detect.sh PROJECT_ROOT`
 2. Parse the JSON output to identify languages, file counts, and available tools.
-3. Read these YAML files from MATRA_ROOT/rules/:
+3. Read these YAML files from TULA_ROOT/rules/:
    - `_scoring.yml` — scoring algorithm, category weights, penalties, profiles
    - `_categories.yml` — category and severity definitions
    - `<language>/<category>.yml` for each detected language (all 4 categories)
    - `documentation/*.yml` (always loaded)
-4. If PROJECT_ROOT/.matra/overrides.yml exists, read it.
-5. If PROJECT_ROOT/.matra/rules/ directory exists, read those files as overrides.
+4. If PROJECT_ROOT/.tula/overrides.yml exists, read it.
+5. If PROJECT_ROOT/.tula/rules/ directory exists, read those files as overrides.
 
 Parse the `--profile` argument (default: `default`). If an overrides.yml
 specifies a profile, use that unless the user explicitly passed `--profile`.
@@ -58,7 +58,7 @@ specifies a profile, use that unless the user explicitly passed `--profile`.
 
 For each detected language, run the corresponding scan script:
 ```bash
-bash MATRA_ROOT/scripts/scan-<language>.sh --project-root PROJECT_ROOT
+bash TULA_ROOT/scripts/scan-<language>.sh --project-root PROJECT_ROOT
 ```
 
 If `--diff REF` was specified, pass `--files <changed_files>` instead
@@ -66,7 +66,7 @@ If `--diff REF` was specified, pass `--files <changed_files>` instead
 
 Always run:
 ```bash
-bash MATRA_ROOT/scripts/scan-docs.sh --project-root PROJECT_ROOT
+bash TULA_ROOT/scripts/scan-docs.sh --project-root PROJECT_ROOT
 ```
 
 Capture all JSON output. Run scan scripts in parallel where possible using
@@ -157,7 +157,7 @@ Present results in this exact format. Be terse. Score first, details after.
 Use British English.
 
 ```
-## Matra: {score}/1000 [{profile}]
+## Tula: {score}/1000 [{profile}]
 
 | Category        | Score | Weight |
 |-----------------|-------|--------|
@@ -199,7 +199,7 @@ If `--fix` was specified, after the report add a section:
 
 ## Override Mechanism
 
-Project-level `.matra/overrides.yml`:
+Project-level `.tula/overrides.yml`:
 ```yaml
 disable: [todo-comment, line-too-long]
 severity_overrides:
@@ -217,7 +217,7 @@ profile: strict
 exclude_paths: ["generated/**"]
 ```
 
-Project-level rule files in `.matra/rules/<language>/<category>.yml` merge
+Project-level rule files in `.tula/rules/<language>/<category>.yml` merge
 with base rules. Rules with matching `id` replace base rules. New rules append.
 
 ## Important Behaviours

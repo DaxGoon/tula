@@ -1,4 +1,4 @@
-# Matra Design Document
+# Tula Design Document
 
 ## Objective
 
@@ -24,7 +24,7 @@ Rules (YAML)  →  Scripts (Bash)  →  LLM (Skill/Prompt)  →  Report
 
 ### Why Not a Python Application
 
-| Concern | PyCC (Python) | Matra (YAML+Bash+LLM) |
+| Concern | PyCC (Python) | Tula (YAML+Bash+LLM) |
 |---------|---------------|------------------------|
 | Adding a rule | Edit Python class, handle imports | Add YAML entry |
 | Adding a language | New Python module, register | New YAML dir + bash script |
@@ -54,17 +54,17 @@ overage) → final score clamped to [0, 1000].
 ### Override Mechanism
 
 Three tiers, highest priority wins:
-1. Base rules (`~/matra/rules/`)
-2. Project overrides (`.matra/rules/` + `.matra/overrides.yml`)
-3. Personal overrides (`~/.config/matra/overrides.yml`)
+1. Base rules (`~/tula/rules/`)
+2. Project overrides (`.tula/rules/` + `.tula/overrides.yml`)
+3. Personal overrides (`~/.config/tula/overrides.yml`)
 
 ### Delivery Mechanisms
 
 | Platform | Mechanism | File |
 |----------|-----------|------|
-| Claude Code | Skill (/matra) | `adapters/claude-code/SKILL.md` |
+| Claude Code | Skill (/tula) | `adapters/claude-code/SKILL.md` |
 | GitHub Copilot | Custom instructions | `adapters/copilot/copilot-instructions.md` |
-| Cursor | Rules file | `adapters/cursor/matra.mdc` |
+| Cursor | Rules file | `adapters/cursor/tula.mdc` |
 | Any (portable) | AGENTS.md | `AGENTS.md` |
 | CI/CD (no LLM) | Bash script | `scripts/ci.sh` |
 
@@ -74,7 +74,7 @@ Three tiers, highest priority wins:
 
 The skill requests all permissions upfront in a single batch. Auto-detects
 language, profile, and tools. No prompts during analysis. The user types
-`/matra` and gets a report.
+`/tula` and gets a report.
 
 ### Languages and Tools
 

@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Matra, please report it responsibly.
+If you discover a security vulnerability in Tula, please report it responsibly.
 
 **Do not open a public issue.**
 
@@ -19,7 +19,7 @@ based on severity.
 
 ## Scope
 
-Matra is a static analysis tool that reads source files and runs external
+Tula is a static analysis tool that reads source files and runs external
 linters. Security concerns include:
 
 - **Rule injection** — malicious YAML rules that execute code

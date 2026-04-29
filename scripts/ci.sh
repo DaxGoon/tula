@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MATRA_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+TULA_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECT_ROOT="."
 PROFILE="default"
 PROFILE_EXPLICIT=false
@@ -33,7 +33,7 @@ if ! command -v jq &>/dev/null; then
 fi
 
 # Load scoring config
-SCORING_FILE="$MATRA_ROOT/rules/_scoring.yml"
+SCORING_FILE="$TULA_ROOT/rules/_scoring.yml"
 if ! [[ -f "$SCORING_FILE" ]]; then
   echo "Error: scoring config not found at $SCORING_FILE" >&2
   exit 3
@@ -68,10 +68,10 @@ if [[ -z "$THRESHOLD" ]]; then
   fi
 fi
 
-echo "Matra CI — profile: $PROFILE, threshold: $THRESHOLD" >&2
+echo "Tula CI — profile: $PROFILE, threshold: $THRESHOLD" >&2
 
 # Phase 1: Detect
-detect_output=$("$MATRA_ROOT/scripts/detect.sh" "$PROJECT_ROOT" 2>/dev/null)
+detect_output=$("$TULA_ROOT/scripts/detect.sh" "$PROJECT_ROOT" 2>/dev/null)
 if [[ -z "$detect_output" ]]; then
   echo "Error: language detection failed" >&2
   exit 3
@@ -104,7 +104,7 @@ tools_missing='[]'
 total_runtime=0
 
 for lang in $languages; do
-  script="$MATRA_ROOT/scripts/scan-${lang}.sh"
+  script="$TULA_ROOT/scripts/scan-${lang}.sh"
   if [[ ! -x "$script" ]]; then
     echo "Warning: no scan script for $lang" >&2
     continue
@@ -139,7 +139,7 @@ for lang in $languages; do
 done
 
 # Run documentation scan
-doc_output=$("$MATRA_ROOT/scripts/scan-docs.sh" --project-root "$PROJECT_ROOT" 2>/dev/null || echo '{"findings":[]}')
+doc_output=$("$TULA_ROOT/scripts/scan-docs.sh" --project-root "$PROJECT_ROOT" 2>/dev/null || echo '{"findings":[]}')
 doc_findings=$(echo "$doc_output" | jq '.findings // []')
 doc_count=$(echo "$doc_findings" | jq 'length')
 if [[ "$doc_count" -gt 0 ]]; then
@@ -242,7 +242,7 @@ report=$(jq -n \
   }')
 
 if [[ "$FORMAT" == "text" ]]; then
-  echo "Matra: $score/1000 [$PROFILE]"
+  echo "Tula: $score/1000 [$PROFILE]"
   echo "Issues: $critical critical | $high high | $medium medium | $low low"
   echo "Threshold: $THRESHOLD — $result"
   echo "Tools: $(echo "$tools_used" | jq -r '.[].tool' | tr '\n' ', ' | sed 's/,$//')"

@@ -200,7 +200,7 @@ if command -v dependency-check &>/dev/null; then
   TMPDIR=$(mktemp -d /tmp/depcheck-XXXXXX)
   DC_EXIT=0
 
-  dependency-check --project matra-scan --scan "$PROJECT_ROOT" \
+  dependency-check --project tula-scan --scan "$PROJECT_ROOT" \
     --format JSON --out "$TMPDIR" 2>/dev/null || DC_EXIT=$?
 
   FINDINGS="[]"
